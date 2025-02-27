@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 
 import { UserEntity } from '../../../database/entities/user.entity';
-
+import { IUserData } from '../../auth/interfaces/user-data.interface';
+import { FollowRepository } from '../../repository/services/follow.repositoty';
+import { UserRepository } from '../../repository/services/user.repository';
+import { BaseUserRequestDto } from '../dto/request/base-user.request.dto';
+import { UpdateUserRequestDto } from '../dto/request/update-user.request.dto';
+import { UserResponseDto } from '../dto/response/user.response.dto';
 import { UserMapper } from './user.mapper';
-import { UserResponseDto } from "../dto/response/user.response.dto";
-import { UpdateUserRequestDto } from "../dto/request/update-user.request.dto";
-import { BaseUserRequestDto } from "../dto/request/base-user.request.dto";
-import { UserRepository } from "../../repository/services/tag.repository";
-import { FollowRepository } from "../../repository/services/follow.repositoty";
 
 @Injectable()
 export class UserService {
@@ -35,11 +35,6 @@ export class UserService {
     const entity = await this.userRepository.findOneBy({ id: userData.userId });
     const user = await this.userRepository.save({ ...entity, ...dto });
     return UserMapper.toResponseDto(user);
-  }
-
-  public async getPublicUser(userId: string): Promise<UserResponseDto> {
-    const entity = await this.findByIdOrThrow(userId);
-    return UserMapper.toResponseDto(entity);
   }
 
   public async follow(userId: string, userData: IUserData): Promise<void> {
