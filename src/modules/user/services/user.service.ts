@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { UserEntity } from '../../../database/entities/user.entity';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { FollowRepository } from '../../repository/services/follow.repositoty';
 import { UserRepository } from '../../repository/services/user.repository';
@@ -35,6 +36,10 @@ export class UserService {
     const entity = await this.userRepository.findOneBy({ id: userData.userId });
     const user = await this.userRepository.save({ ...entity, ...dto });
     return UserMapper.toResponseDto(user);
+  }
+  public async getPublicUser(userId: string): Promise<UserResponseDto> {
+    const entity = await this.userRepository.findOneBy({ id: userId });
+    return UserMapper.toResponseDto(entity);
   }
 
   public async follow(userId: string, userData: IUserData): Promise<void> {

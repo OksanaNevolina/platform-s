@@ -39,6 +39,13 @@ export class UserController {
   ): Promise<UserResponseDto> {
     return await this.userService.updateMe(userData, dto);
   }
+  @SkipAuth()
+  @Get(':userId')
+  public async getPublicUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<UserResponseDto> {
+    return await this.userService.getPublicUser(userId);
+  }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
