@@ -22,8 +22,11 @@ async function bootstrap() {
       in: 'headers',
     })
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerHelper.setDefaultResponses(document);
+
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: {
       docExpansion: 'list',
@@ -31,6 +34,7 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -49,4 +53,5 @@ async function bootstrap() {
     Logger.log(`Swagger running ${url}/docs`);
   });
 }
+
 bootstrap();

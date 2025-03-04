@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import configuration from '../configs/configs';
+import { ArticleModule } from './article/article.module';
 import { AuthModule } from './auth/auth.module';
 import { PostgresModule } from './postgres/postgres.module';
 import { RedisModule } from './redis/redis.module';
@@ -19,6 +20,7 @@ import { UserModule } from './user/user.module';
     }),
     AuthModule,
     UserModule,
+    ArticleModule,
     RepositoryModule,
   ],
   controllers: [],
