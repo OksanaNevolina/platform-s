@@ -10,18 +10,19 @@ export class ArticleMapper {
   ): ArticleResponseDto {
     return {
       id: articleEntity.id,
-      body: articleEntity.body,
       title: articleEntity.title,
       description: articleEntity.description,
+      body: articleEntity.body,
       created: articleEntity.created,
       updated: articleEntity.updated,
-      isLiked: !!articleEntity.likes?.[0],
-      tags: articleEntity.tags.map(t => t.name),
+      isLiked: articleEntity.likes?.length > 0,
+      tags: articleEntity.tags?.map((tag) => tag.name) || [],
       user: articleEntity.user
-        ? UserMapper.toResponseDto(articleEntity.user)
+        ? UserMapper.toResponseForArticleDto(articleEntity.user)
         : null,
     };
   }
+
   public static toListResponseDto(
     entities: ArticleEntity[],
     total: number,

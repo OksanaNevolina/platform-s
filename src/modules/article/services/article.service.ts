@@ -72,79 +72,80 @@ export class ArticleService {
       articleId,
       userData,
     );
+
     if (!article) {
       throw new UnprocessableEntityException();
     }
     return ArticleMapper.toResponseDto(article);
   }
 
-  public async editArticleById(
-    articleId: string,
-    userData: IUserData,
-    dto: EditArticleRequestDto,
-  ): Promise<ArticleResponseDto> {
-    const article = await this.findMyOneByIdOrThrow(articleId, userData.userId);
-    const newArticle = await this.articleRepository.save({
-      ...article,
-      ...dto,
-    });
-    return ArticleMapper.toResponseDto(newArticle);
-  }
-
-  public async deleteArticleById(
-    articleId: string,
-    userData: IUserData,
-  ): Promise<void> {
-    const article = await this.findMyOneByIdOrThrow(articleId, userData.userId);
-    await this.articleRepository.remove(article);
-  }
-
-  public async like(articleId: string, userData: IUserData): Promise<void> {
-    const article = await this.articleRepository.findOneBy({ id: articleId });
-    if (article.user_id === userData.userId) {
-      throw new ForbiddenException('You cant like your article');
-    }
-    const like = await this.likeRepository.findOneBy({
-      user_id: userData.userId,
-      article_id: article.id,
-    });
-    if (like) {
-      throw new ForbiddenException('You already like this article');
-    }
-    await this.likeRepository.save(
-      this.likeRepository.create({
-        user_id: userData.userId,
-        article_id: article.id,
-      }),
-    );
-  }
-
-  public async dislike(articleId: string, userData: IUserData): Promise<void> {
-    const article = await this.articleRepository.findOneBy({ id: articleId });
-
-    const like = await this.likeRepository.findOneBy({
-      user_id: userData.userId,
-      article_id: article.id,
-    });
-    if (!like) {
-      throw new ConflictException('You cant dislike this article');
-    }
-    await this.likeRepository.remove(like);
-  }
-
-  private async findMyOneByIdOrThrow(
-    articleId: string,
-    userId: string,
-  ): Promise<ArticleEntity> {
-    const article = await this.articleRepository.findOneBy({
-      id: articleId,
-    });
-    if (!article) {
-      throw new UnprocessableEntityException();
-    }
-    if (article.user_id !== userId) {
-      throw new ForbiddenException();
-    }
-    return article;
-  }
+  // public async editArticleById(
+  //   articleId: string,
+  //   userData: IUserData,
+  //   dto: EditArticleRequestDto,
+  // ): Promise<ArticleResponseDto> {
+  //   const article = await this.findMyOneByIdOrThrow(articleId, userData.userId);
+  //   const newArticle = await this.articleRepository.save({
+  //     ...article,
+  //     ...dto,
+  //   });
+  //   return ArticleMapper.toResponseDto(newArticle);
+  // }
+  //
+  // public async deleteArticleById(
+  //   articleId: string,
+  //   userData: IUserData,
+  // ): Promise<void> {
+  //   const article = await this.findMyOneByIdOrThrow(articleId, userData.userId);
+  //   await this.articleRepository.remove(article);
+  // }
+  //
+  // public async like(articleId: string, userData: IUserData): Promise<void> {
+  //   const article = await this.articleRepository.findOneBy({ id: articleId });
+  //   if (article.user_id === userData.userId) {
+  //     throw new ForbiddenException('You cant like your article');
+  //   }
+  //   const like = await this.likeRepository.findOneBy({
+  //     user_id: userData.userId,
+  //     article_id: article.id,
+  //   });
+  //   if (like) {
+  //     throw new ForbiddenException('You already like this article');
+  //   }
+  //   await this.likeRepository.save(
+  //     this.likeRepository.create({
+  //       user_id: userData.userId,
+  //       article_id: article.id,
+  //     }),
+  //   );
+  // }
+  //
+  // public async dislike(articleId: string, userData: IUserData): Promise<void> {
+  //   const article = await this.articleRepository.findOneBy({ id: articleId });
+  //
+  //   const like = await this.likeRepository.findOneBy({
+  //     user_id: userData.userId,
+  //     article_id: article.id,
+  //   });
+  //   if (!like) {
+  //     throw new ConflictException('You cant dislike this article');
+  //   }
+  //   await this.likeRepository.remove(like);
+  // }
+  //
+  // private async findMyOneByIdOrThrow(
+  //   articleId: string,
+  //   userId: string,
+  // ): Promise<ArticleEntity> {
+  //   const article = await this.articleRepository.findOneBy({
+  //     id: articleId,
+  //   });
+  //   if (!article) {
+  //     throw new UnprocessableEntityException();
+  //   }
+  //   if (article.user_id !== userId) {
+  //     throw new ForbiddenException();
+  //   }
+  //   return article;
+  // }
 }

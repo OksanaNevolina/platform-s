@@ -20,12 +20,13 @@ export class ArticleRepository extends Repository<ArticleEntity> {
       myId: userData.userId,
     });
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.tags', 'tags');
     qb.leftJoinAndSelect(
       'user.followings',
       'follow',
       'follow.follower_id = :myId',
     );
-    // qb.setParameter('myId', userData.userId);
+    qb.setParameter('myId', userData.userId);
     qb.addOrderBy('article.created', 'DESC');
     qb.take(query.limit);
     qb.skip(query.offset);
@@ -37,15 +38,18 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     userData: IUserData,
   ): Promise<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
-    qb.leftJoinAndSelect('article.likes', 'like', 'like.user_id = :myId');
+
+    qb.leftJoinAndSelect('article.likes', 'like');
     qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.tags', 'tag');
     qb.leftJoinAndSelect(
       'user.followings',
       'follow',
-      'follow.follower_id = :myId',
-      { myId: userData.userId },
+      'follow.follower_id = :userId',
     );
+
     qb.where('article.id = :articleId', { articleId });
+    qb.setParameter('userId', userData.userId);
 
     return await qb.getOne();
   }

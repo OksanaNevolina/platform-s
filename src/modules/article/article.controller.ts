@@ -36,7 +36,7 @@ export class ArticleController {
     return await this.articleService.getList(query, userData);
   }
 
-  @Put()
+  @Post()
   public async create(
     @Body() dto: CreateArticleRequestDto,
     @CurrentUser() userData: IUserData,
