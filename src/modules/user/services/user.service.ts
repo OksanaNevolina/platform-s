@@ -9,7 +9,6 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { FollowRepository } from '../../repository/services/follow.repositoty';
 import { UserRepository } from '../../repository/services/user.repository';
-import { BaseUserRequestDto } from '../dto/request/base-user.request.dto';
 import { UpdateUserRequestDto } from '../dto/request/update-user.request.dto';
 import { UserResponseDto } from '../dto/response/user.response.dto';
 import { UserMapper } from './user.mapper';
@@ -20,12 +19,16 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly followRepository: FollowRepository,
   ) {}
-  public async create(createUserDto: BaseUserRequestDto): Promise<any> {
-    return `${createUserDto}`;
-  }
 
   public async findMe(userData: IUserData): Promise<UserResponseDto> {
-    const entity = await this.userRepository.findOneBy({ id: userData.userId });
+    const entity = await this.userRepository.findUserWithRelations(
+      userData.userId,
+    );
+
+    if (!entity) {
+      throw new Error('User not found');
+    }
+
     return UserMapper.toResponseDto(entity);
   }
 
@@ -83,6 +86,7 @@ export class UserService {
     if (!entity) {
       throw new UnprocessableEntityException();
     }
+    console.log(entity);
     return await entity;
   }
   public async isEmailUniqueOrThrow(email: string): Promise<void> {

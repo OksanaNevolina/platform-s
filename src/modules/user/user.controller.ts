@@ -10,7 +10,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
@@ -26,6 +26,11 @@ export class UserController {
 
   @ApiBearerAuth()
   @Get('me')
+  @ApiResponse({
+    status: 200,
+    description: 'Get current user data',
+    type: UserResponseDto,
+  })
   public async findMe(
     @CurrentUser() userData: IUserData,
   ): Promise<UserResponseDto> {
